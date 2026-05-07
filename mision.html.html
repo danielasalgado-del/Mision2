@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misión Recuperación</title>
+    <style>
+        /* --- ESTILOS CSS (Proporcionados por el usuario y ajustados) --- */
+        
+        /* Estilos base de la página */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d1117; /* Fondo oscuro terminal */
+            /* Efecto de código binario de fondo (SVG embebido para que funcione sin archivos externos) */
+            background-image: linear-gradient(180deg, rgba(0, 255, 128, 0.05) 0%, rgba(0, 0, 0, 0) 100%), 
+                              url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="10" y="20" fill="rgba(0, 255, 128, 0.05)" font-size="12">1 0 1 1 0</text><text x="10" y="40" fill="rgba(0, 255, 128, 0.05)" font-size="12">0 1 0 1 0</text><text x="10" y="60" fill="rgba(0, 255, 128, 0.05)" font-size="12">1 0 1 0 1</text></svg>');
+            background-size: cover, 200px 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada */
+            overflow: hidden;
+            color: #ffffff; /* Color de texto base para el body */
+        }
+
+        /* Contenedor principal (Tarjeta de la misión) con brillo verde */
+        .agents-container {
+            background: rgba(13, 17, 23, 0.9); /* Fondo card semi-transparente */
+            border: 2px solid #00ff80;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(0, 255, 128, 0.6); /* Brillo verde exterior */
+            max-width: 500px; /* Un poco más ancho para las opciones */
+            width: 90%;
+            /* Asegurar que las pantallas internas se centren bien */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Título con brillo Cyan */
+        .active-title, h1, h2, h3 {
+            font-size: 24px;
+            color: #00ffff;
+            text-shadow: 0 0 15px #00ffff; /* Brillo cyan */
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        h3 { font-size: 18px; text-transform: none;} /* Ajuste para h3 */
+
+        /* Lista de nombres de agentes (Pantalla 2) */
+        .agent-list {
+            font-size: 18px;
+            color: #00ff80;
+            margin-bottom: 40px;
+            line-height: 1.8;
+            text-shadow: 0 0 5px rgba(0, 255, 128, 0.5); /* Brillo verde suave */
+            text-align: left; /* Alinear nombres a la izquierda */
+            width: 100%; /* Ocupar ancho */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centrar la columna de nombres */
+        }
+
+        .agent-name {
+            display: block;
+            width: fit-content; /* Nombres ocupan su ancho */
+        }
+
+        /* Estilos genéricos para botones con brillo verde y extremos redondeados */
+        .accept-button, button {
+            display: block;
+            width: 100%;
+            max-width: 300px; /* Ancho máximo para botones sueltos */
+            padding: 15px;
+            background: transparent;
+            border: 2px solid #00ff80;
+            border-radius: 30px; /* Extremos muy redondeados */
+            color: #00ff80;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(0, 255, 128, 0.5); /* Brillo del botón */
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            font-family: inherit; /* Heredar Courier New */
+            margin-top: 20px; /* Separación superior */
+        }
+
+        /* Efecto hover para botones */
+        .accept-button:hover, button:hover {
+            background-color: rgba(0, 255, 128, 0.1);
+            box-shadow: 0 0 25px rgba(0, 255, 128, 0.8);
+        }
+        
+        /* Estilos para inputs de número (Fases) */
+        input[type="number"] {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #00ff80;
+            color: #00ff80;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: inherit;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        /* --- ESTILOS PARA LA LÓGICA DE PANTALLAS --- */
+        .screen {
+            display: none; /* Ocultar por defecto */
+            width: 100%;
+        }
+
+        .active {
+            display: flex; /* Mostrar como flex para centrar contenido */
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Estilos para opciones de radio (Palabra clave) */
+        .options {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 20px;
+            color: #00ff80;
+        }
+        
+        .option {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .option input {
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="agents-container">
+
+        <div id="screen1" class="screen active">
+            <h1>Misión Recuperación</h1>
+            <button onclick="nextScreen(2)">Iniciar Misión</button>
+        </div>
+
+        <div id="screen2" class="screen">
+            <h2 class="active-title">AGENTES ACTIVOS:</h2>
+            <div class="agent-list">
+                <span class="agent-name">Josue</span>
+                <span class="agent-name">Juliana</span>
+                <span class="agent-name">Albert</span>
+                <span class="agent-name">Manny</span>
+                <span class="agent-name">Esteban</span>
+                <span class="agent-name">Juan Pablo</span>
+                <span class="agent-name">Edualdo</span>
+                <span class="agent-name">Luis Fer</span>
+            </div>
+            <button onclick="nextScreen(3)">ACEPTAR</button>
+        </div>
+
+        <div id="screen3" class="screen">
+            <h3>Nuestra palabra clave es:</h3>
+            <div class="options">
+                <div class="option"><input type="radio" name="clave" id="a"> <label for="a">A. Manny vive en Colombia</label></div>
+                <div class="option"><input type="radio" name="clave" id="b"> <label for="b">B. Esteban es una madre</label></div>
+                <div class="option"><input type="radio" name="clave" id="c"> <label for="c">C. Panamá tiene día de la madre</label></div>
+            </div>
+            <button onclick="checkClave()">SIGUIENTE</button>
+        </div>
+
+        <div id="screen4" class="screen">
+            <h3>MISIÓN ENCRIPTADA – FASE 1</h3>
+            <p>Pista: 4 + 3</p>
+            <input type="number" id="inputFase1" placeholder="Resultado">
+            <button onclick="checkFase1()">VALIDAR</button>
+        </div>
+
+        <div id="screen5" class="screen">
+            <h3>MISIÓN ENCRIPTADA – FASE 2</h3>
+            <p>Pista: 9 / 3</p>
+            <input type="number" id="inputFase2" placeholder="Resultado">
+            <button onclick="checkFase2()">VALIDAR</button>
+        </div>
+
+        <div id="screen6" class="screen">
+            <h2>FELICITACIONES</h2>
+            <p>La misión está para el 8 de mayo.</p>
+            <p>¿ACEPTAS?</p>
+            <button onclick="nextScreen(7)">ACEPTAR</button>
+        </div>
+
+        <div id="screen7" class="screen">
+            <p>Recibirán más pistas esta semana.</p>
+            <button class="accept-button" onclick="alert('Mensaje autodestruido...')">ENTENDIDO</button>
+            <p style="font-size: 0.8em; margin-top: 20px; color: #888;">Este mensaje se autodestruirá...</p>
+        </div>
+
+    </div> <script>
+        // Función para cambiar de pantalla
+        function nextScreen(num) {
+            // Ocultar todas las pantallas
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            // Mostrar la pantalla solicitada
+            const targetScreen = document.getElementById('screen' + num);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+            }
+        }
+
+        // Validación Screen 3 (Palabra Clave)
+        function checkClave() {
+            // La opción correcta es la B
+            if(document.getElementById('b').checked) {
+                nextScreen(4); // Avanza a Fase 1
+            } else {
+                alert("Palabra clave incorrecta.");
+            }
+        }
+
+        // Validación Screen 4 (Fase 1: 4+3=7)
+        function checkFase1() {
+            if(document.getElementById('inputFase1').value == "7") {
+                nextScreen(5); // Avanza a Fase 2
+            } else {
+                alert("Código incorrecto.");
+                document.getElementById('inputFase1').value = ''; // Limpiar input
+            }
+        }
+
+        // Validación Screen 5 (Fase 2: 9/3=3)
+        function checkFase2() {
+            if(document.getElementById('inputFase2').value == "3") {
+                nextScreen(6); // Avanza a Felicitaciones
+            } else {
+                alert("Código incorrecto.");
+                document.getElementById('inputFase2').value = ''; // Limpiar input
+            }
+        }
+    </script>
+
+</body>
+</html>
